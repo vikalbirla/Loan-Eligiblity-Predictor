@@ -31,7 +31,7 @@ Encoded categorical variables using Label Encoding.
 
 Standardized numerical features for uniform scaling.
 
-Exploratory Data Analysis (EDA)
+Exploratory Data Analysis (EDA).
 
 Distribution plots for key numeric features (ApplicantIncome, LoanAmount).
 
@@ -47,13 +47,11 @@ Random Forest Classifier
 
 Evaluation Metrics:
 
-Accuracy
+Accuracy is measured through Confusion Matrix.
 
-Confusion Matrix
+ROC–AUC Curve is generated.
 
-ROC–AUC Curve
-
-Results
+Results:-
 
 Both models were trained and evaluated.
 

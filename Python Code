@@ -1,0 +1,63 @@
+# Loan Eligibility Predictor - Short Version
+# Author: Vikal Birla
+# Description: Analytics + ML project for finance portfolio
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, RocCurveDisplay
+
+ Generate Synthetic Dataset
+np.random.seed(42)
+n = 600
+data = pd.DataFrame({
+    'Gender': np.random.choice(['Male','Female'], n),
+    'Married': np.random.choice(['Yes','No'], n),
+    'Dependents': np.random.choice(['0','1','2','3+'], n),
+    'Education': np.random.choice(['Graduate','Not Graduate'], n, p=[0.7,0.3]),
+    'Self_Employed': np.random.choice(['Yes','No'], n, p=[0.2,0.8]),
+    'ApplicantIncome': np.random.randint(1500, 25000, n),
+    'CoapplicantIncome': np.random.randint(0, 15000, n),
+    'LoanAmount': np.random.randint(50, 700, n),
+    'Loan_Amount_Term': np.random.choice([180, 240, 360, 480], n, p=[0.2,0.4,0.3,0.1]),
+    'Credit_History': np.random.choice([1, 0], n, p=[0.8,0.2]),
+    'Property_Area': np.random.choice(['Urban','Rural','Semiurban'], n, p=[0.35,0.25,0.4])
+})
+# Compute loan approval probability
+base = 0.25 + 0.00005*data['ApplicantIncome'] + 0.00002*data['CoapplicantIncome'] + 0.3*data['Credit_History']
+data['Loan_Status'] = np.where(base > np.random.rand(n), 'Y', 'N')
+data.to_csv("loan_data_synthetic.csv", index=False)
+
+# Preprocessing
+X = data.drop('Loan_Status', axis=1)
+y = LabelEncoder().fit_transform(data['Loan_Status'])
+X = X.apply(LabelEncoder().fit_transform)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Model Training
+lr = LogisticRegression(max_iter=500).fit(X_train, y_train)
+rf = RandomForestClassifier(n_estimators=100, random_state=42).fit(X_train, y_train)
+
+#  4️ Evaluation 
+for name, model in [('LogReg', lr), ('RandForest', rf)]:
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    auc = roc_auc_score(y_test, model.predict_proba(X_test)[:,1])
+    print(f"{name}: Accuracy={acc:.3f}, AUC={auc:.3f}")
+    RocCurveDisplay.from_estimator(model, X_test, y_test)
+    plt.title(f'ROC Curve - {name}')
+    plt.show()
+
+# Confusion Matrix for best model (RF)
+cm = confusion_matrix(y_test, rf.predict(X_test))
+plt.imshow(cm, cmap='Blues')
+plt.title("Confusion Matrix - RandomForest")
+plt.xlabel("Predicted"); plt.ylabel("Actual")
+plt.colorbar(); plt.show()

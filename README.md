@@ -31,7 +31,7 @@ Encoded categorical variables using Label Encoding.
 
 Standardized numerical features for uniform scaling.
 
-Exploratory Data Analysis (EDA).
+Exploratory Data Analysis.
 
 Distribution plots for key numeric features (ApplicantIncome, LoanAmount).
 

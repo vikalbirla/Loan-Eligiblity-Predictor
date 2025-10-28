@@ -9,7 +9,7 @@ A synthetic dataset (loan_data_synthetic.csv) was generated to closely resemble 
 It contains 614 records and 12 columns.
 
 Feature	Description
-Gender	Male / Female
+Gender	Male / Femal
 Married	Applicant’s marital status
 Dependents	Number of dependents (0,1,2,3+)
 Education	Graduate / Not Graduate
